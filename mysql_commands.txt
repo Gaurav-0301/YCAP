@@ -1,0 +1,452 @@
+Microsoft Windows [Version 10.0.26200.9550]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\Lenovo>"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
+Enter password: *********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 12
+Server version: 8.0.46 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2026, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database onlineshopping;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| college            |
+| information_schema |
+| mysql              |
+| onlineshopping     |
+| performance_schema |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+8 rows in set (0.00 sec)
+
+mysql> use onlineshopping;
+Database changed
+mysql> create table customer(
+    -> cust_id varchar(5) primary key,
+    -> f_name varchar(50),
+    -> l_name varchar(50),
+    -> area varchar(10),
+    -> phone_no varchar(10)
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> create table category(
+    -> category_id varchar(50) primary key,
+    -> category_name varchar(30)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> create table product(
+    -> product_id varchar(5) primary key,
+    -> product_name varchar(50),
+    -> category_id varchar(5),
+    -> price decimal(8,2),
+    -> stock int,
+    -> foreign key (category_id) references category(category_id)
+    -> );
+Query OK, 0 rows affected (0.12 sec)
+
+mysql> CREATE TABLE `order` (
+    ->     order_id VARCHAR(5) PRIMARY KEY,
+    ->     cust_id VARCHAR(5),
+    ->     order_date DATE,
+    ->     total_amount DECIMAL(10,2),
+    ->     FOREIGN KEY (cust_id) REFERENCES customer(cust_id)
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> CREATE TABLE order_items (
+    ->     order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     order_id VARCHAR(5),
+    ->     product_id VARCHAR(5),
+    ->     quantity INT,
+    ->     price DECIMAL(8,2),
+    ->     FOREIGN KEY (order_id) REFERENCES `order`(order_id),
+    ->     FOREIGN KEY (product_id) REFERENCES product(product_id)
+    -> );
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> CREATE TABLE invoice (
+    ->     inv_no VARCHAR(5) PRIMARY KEY,
+    ->     order_id VARCHAR(5),
+    ->     inv_date DATE,
+    ->     amount DECIMAL(10,2),
+    ->     FOREIGN KEY (order_id) REFERENCES `order`(order_id)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> CREATE TABLE payment (
+    -> payment_id VARCHAR(5) PRIMARY KEY,
+    -> inv_no VARCHAR(5),
+    -> payment_date DATE,
+    -> payment_mode VARCHAR(20),
+    -> payment_status VARCHAR(15),
+    -> FOREIGN KEY (inv_no) REFERENCES invoice(inv_no)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> INSERT INTO customer (cust_id, f_name, l_name, area, phone_no)
+    -> VALUES
+    -> ('C001', 'Rahul', 'Sharma', 'Pune', '9876543210'),
+    -> ('C002', 'Priya', 'Patil', 'Mumbai', '9123456780'),
+    -> ('C003', 'Amit', 'Joshi', 'Nagpur', '9988776655'),
+    -> ('C004', 'Sneha', 'Deshmukh', 'Nashik', '9090909090'),
+    -> ('C005', 'Rohan', 'Kulkarni', 'Thane', '9765432109'),
+    -> ('C006', 'Neha', 'Pawar', 'Pune', '9012345678'),
+    -> ('C007', 'Akash', 'Jadhav', 'Nagpur', '9898989898'),
+    -> ('C008', 'Pooja', 'Shinde', 'Mumbai', '9345678901'),
+    -> ('C009', 'Vikas', 'More', 'Aurangabad', '9876501234'),
+    -> ('C010', 'Anjali', 'Kale', 'Nashik', '9567890123');
+Query OK, 10 rows affected (0.02 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO category (category_id, category_name)
+    -> VALUES
+    -> ('CAT01', 'Electronics'),
+    -> ('CAT02', 'Clothing'),
+    -> ('CAT03', 'Groceries'),
+    -> ('CAT04', 'Furniture'),
+    -> ('CAT05', 'Books'),
+    -> ('CAT06', 'Sports'),
+    -> ('CAT07', 'Footwear'),
+    -> ('CAT08', 'Beauty'),
+    -> ('CAT09', 'Stationery'),
+    -> ('CAT10', 'Accessories');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO product (product_id, product_name, category_id, price, stock)
+    -> VALUES
+    -> ('P001', 'Laptop', 'CAT01', 55000.00, 25),
+    -> ('P002', 'Smartphone', 'CAT01', 22000.00, 40),
+    -> ('P003', 'T-Shirt', 'CAT02', 799.00, 100),
+    -> ('P004', 'Jeans', 'CAT02', 1499.00, 60),
+    -> ('P005', 'Rice 5kg', 'CAT03', 450.00, 80),
+    -> ('P006', 'Office Chair', 'CAT04', 6500.00, 15),
+    -> ('P007', 'Java Programming Book', 'CAT05', 699.00, 30),
+    -> ('P008', 'Cricket Bat', 'CAT06', 2500.00, 20),
+    -> ('P009', 'Running Shoes', 'CAT07', 3200.00, 35),
+    -> ('P010', 'Face Wash', 'CAT08', 399.00, 50),
+    -> ('P011', 'Notebook', 'CAT09', 120.00, 200),
+    -> ('P012', 'Wireless Mouse', 'CAT10', 899.00, 45);
+Query OK, 12 rows affected (0.01 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO `order` (order_id, cust_id, order_date, total_amount)
+    -> VALUES
+    -> ('O001', 'C001', '2026-09-01', 55899.00),
+    -> ('O002', 'C002', '2026-09-03', 22799.00),
+    -> ('O003', 'C003', '2026-09-05', 3999.00),
+    -> ('O004', 'C004', '2026-09-08', 6500.00),
+    -> ('O005', 'C005', '2026-09-10', 3199.00),
+    -> ('O006', 'C006', '2026-09-12', 1499.00),
+    -> ('O007', 'C007', '2026-09-15', 799.00),
+    -> ('O008', 'C008', '2026-09-18', 3200.00),
+    -> ('O009', 'C009', '2026-09-20', 699.00),
+    -> ('O010', 'C010', '2026-09-22', 899.00);
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO order_items
+    -> (order_id, product_id, quantity, price)
+    -> VALUES
+    -> ('O001', 'P001', 1, 55000.00),
+    -> ('O001', 'P011', 2, 120.00),
+    ->
+    -> ('O002', 'P002', 1, 22000.00),
+    -> ('O002', 'P003', 1, 799.00),
+    ->
+    -> ('O003', 'P009', 1, 3200.00),
+    -> ('O003', 'P010', 2, 399.00),
+    ->
+    -> ('O004', 'P006', 1, 6500.00),
+    ->
+    -> ('O005', 'P008', 1, 2500.00),
+    -> ('O005', 'P009', 1, 3200.00),
+    ->
+    -> ('O006', 'P004', 1, 1499.00),
+    ->
+    -> ('O007', 'P003', 1, 799.00),
+    ->
+    -> ('O008', 'P009', 1, 3200.00),
+    ->
+    -> ('O009', 'P007', 1, 699.00),
+    ->
+    -> ('O010', 'P012', 1, 899.00);
+Query OK, 14 rows affected (0.01 sec)
+Records: 14  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO invoice (inv_no, order_id, inv_date, amount)
+    -> VALUES
+    -> ('I001', 'O001', '2026-09-01', 55899.00),
+    -> ('I002', 'O002', '2026-09-03', 22799.00),
+    -> ('I003', 'O003', '2026-09-05', 3999.00),
+    -> ('I004', 'O004', '2026-09-08', 6500.00),
+    -> ('I005', 'O005', '2026-09-10', 3199.00),
+    -> ('I006', 'O006', '2026-09-12', 1499.00),
+    -> ('I007', 'O007', '2026-09-15', 799.00),
+    -> ('I008', 'O008', '2026-09-18', 3200.00),
+    -> ('I009', 'O009', '2026-09-20', 699.00),
+    -> ('I010', 'O010', '2026-09-22', 899.00);
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO invoice (inv_no, order_id, inv_date, amount)
+    -> VALUES
+    -> ('I011', 'O001', '2026-09-01', 55899.00),
+    -> ('I012', 'O002', '2026-09-03', 22799.00),
+    -> ('I013', 'O003', '2026-09-05', 3999.00),
+    -> ('I014', 'O004', '2026-09-08', 6500.00),
+    -> ('I015', 'O005', '2026-09-10', 3199.00);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO payment
+    -> (payment_id, inv_no, payment_date, payment_mode, payment_status)
+    -> VALUES
+    -> ('P001', 'I001', '2026-09-01', 'UPI', 'Paid'),
+    -> ('P002', 'I002', '2026-09-03', 'Credit Card', 'Paid'),
+    -> ('P003', 'I003', '2026-09-05', 'Cash', 'Paid'),
+    -> ('P004', 'I004', '2026-09-08', 'Debit Card', 'Paid'),
+    -> ('P005', 'I005', '2026-09-10', 'UPI', 'Pending'),
+    -> ('P006', 'I006', '2026-09-12', 'Net Banking', 'Paid'),
+    -> ('P007', 'I007', '2026-09-15', 'Cash', 'Paid'),
+    -> ('P008', 'I008', '2026-09-18', 'UPI', 'Failed'),
+    -> ('P009', 'I009', '2026-09-20', 'Credit Card', 'Paid'),
+    -> ('P010', 'I010', '2026-09-22', 'UPI', 'Pending');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM customer;
++---------+--------+----------+------------+------------+
+| cust_id | f_name | l_name   | area       | phone_no   |
++---------+--------+----------+------------+------------+
+| C001    | Rahul  | Sharma   | Pune       | 9876543210 |
+| C002    | Priya  | Patil    | Mumbai     | 9123456780 |
+| C003    | Amit   | Joshi    | Nagpur     | 9988776655 |
+| C004    | Sneha  | Deshmukh | Nashik     | 9090909090 |
+| C005    | Rohan  | Kulkarni | Thane      | 9765432109 |
+| C006    | Neha   | Pawar    | Pune       | 9012345678 |
+| C007    | Akash  | Jadhav   | Nagpur     | 9898989898 |
+| C008    | Pooja  | Shinde   | Mumbai     | 9345678901 |
+| C009    | Vikas  | More     | Aurangabad | 9876501234 |
+| C010    | Anjali | Kale     | Nashik     | 9567890123 |
++---------+--------+----------+------------+------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT f_name, area
+    -> FROM customer
+    -> WHERE cust_id = 'C03';
+Empty set (0.00 sec)
+
+mysql> SELECT f_name, l_name, phone_no
+    -> FROM customer;
++--------+----------+------------+
+| f_name | l_name   | phone_no   |
++--------+----------+------------+
+| Rahul  | Sharma   | 9876543210 |
+| Priya  | Patil    | 9123456780 |
+| Amit   | Joshi    | 9988776655 |
+| Sneha  | Deshmukh | 9090909090 |
+| Rohan  | Kulkarni | 9765432109 |
+| Neha   | Pawar    | 9012345678 |
+| Akash  | Jadhav   | 9898989898 |
+| Pooja  | Shinde   | 9345678901 |
+| Vikas  | More     | 9876501234 |
+| Anjali | Kale     | 9567890123 |
++--------+----------+------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(*) AS total_customers
+    -> FROM customer;
++-----------------+
+| total_customers |
++-----------------+
+|              10 |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT COUNT(*) AS total_customers
+    -> FROM customer;
++-----------------+
+| total_customers |
++-----------------+
+|              10 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> UPDATE customer
+    -> SET area = 'JK'
+    -> WHERE cust_id = 'C01';
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> SELECT *
+    -> FROM customer
+    -> WHERE area LIKE '_A%';
++---------+--------+----------+--------+------------+
+| cust_id | f_name | l_name   | area   | phone_no   |
++---------+--------+----------+--------+------------+
+| C003    | Amit   | Joshi    | Nagpur | 9988776655 |
+| C004    | Sneha  | Deshmukh | Nashik | 9090909090 |
+| C007    | Akash  | Jadhav   | Nagpur | 9898989898 |
+| C010    | Anjali | Kale     | Nashik | 9567890123 |
++---------+--------+----------+--------+------------+
+4 rows in set (0.00 sec)
+
+mysql> UPDATE customer
+    -> SET phone_no = '567889'
+    -> WHERE f_name = 'Rajesh';
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> UPDATE customer
+    -> SET phone_no = '567889'
+    -> WHERE f_name = 'Rajesh';
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> DELETE FROM customer
+    -> WHERE cust_id = 'C09';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM category;
++-------------+---------------+
+| category_id | category_name |
++-------------+---------------+
+| CAT01       | Electronics   |
+| CAT02       | Clothing      |
+| CAT03       | Groceries     |
+| CAT04       | Furniture     |
+| CAT05       | Books         |
+| CAT06       | Sports        |
+| CAT07       | Footwear      |
+| CAT08       | Beauty        |
+| CAT09       | Stationery    |
+| CAT10       | Accessories   |
++-------------+---------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM product
+    -> WHERE price > 150;
++------------+-----------------------+-------------+----------+-------+
+| product_id | product_name          | category_id | price    | stock |
++------------+-----------------------+-------------+----------+-------+
+| P001       | Laptop                | CAT01       | 55000.00 |    25 |
+| P002       | Smartphone            | CAT01       | 22000.00 |    40 |
+| P003       | T-Shirt               | CAT02       |   799.00 |   100 |
+| P004       | Jeans                 | CAT02       |  1499.00 |    60 |
+| P005       | Rice 5kg              | CAT03       |   450.00 |    80 |
+| P006       | Office Chair          | CAT04       |  6500.00 |    15 |
+| P007       | Java Programming Book | CAT05       |   699.00 |    30 |
+| P008       | Cricket Bat           | CAT06       |  2500.00 |    20 |
+| P009       | Running Shoes         | CAT07       |  3200.00 |    35 |
+| P010       | Face Wash             | CAT08       |   399.00 |    50 |
+| P012       | Wireless Mouse        | CAT10       |   899.00 |    45 |
++------------+-----------------------+-------------+----------+-------+
+11 rows in set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM product
+    -> WHERE price BETWEEN 100 AND 180;
++------------+--------------+-------------+--------+-------+
+| product_id | product_name | category_id | price  | stock |
++------------+--------------+-------------+--------+-------+
+| P011       | Notebook     | CAT09       | 120.00 |   200 |
++------------+--------------+-------------+--------+-------+
+1 row in set (0.00 sec)
+
+mysql> SELECT product_name, price
+    -> FROM product;
++-----------------------+----------+
+| product_name          | price    |
++-----------------------+----------+
+| Laptop                | 55000.00 |
+| Smartphone            | 22000.00 |
+| T-Shirt               |   799.00 |
+| Jeans                 |  1499.00 |
+| Rice 5kg              |   450.00 |
+| Office Chair          |  6500.00 |
+| Java Programming Book |   699.00 |
+| Cricket Bat           |  2500.00 |
+| Running Shoes         |  3200.00 |
+| Face Wash             |   399.00 |
+| Notebook              |   120.00 |
+| Wireless Mouse        |   899.00 |
++-----------------------+----------+
+12 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     c.category_name,
+    ->     COUNT(p.product_id) AS product_count
+    -> FROM category c
+    -> LEFT JOIN product p
+    -> ON c.category_id = p.category_id
+    -> GROUP BY c.category_id, c.category_name;
++---------------+---------------+
+| category_name | product_count |
++---------------+---------------+
+| Electronics   |             2 |
+| Clothing      |             2 |
+| Groceries     |             1 |
+| Furniture     |             1 |
+| Books         |             1 |
+| Sports        |             1 |
+| Footwear      |             1 |
+| Beauty        |             1 |
+| Stationery    |             1 |
+| Accessories   |             1 |
++---------------+---------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     MAX(price) AS maximum_price,
+    ->     MIN(price) AS minimum_price
+    -> FROM product;
++---------------+---------------+
+| maximum_price | minimum_price |
++---------------+---------------+
+|      55000.00 |        120.00 |
++---------------+---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM `order`
+    -> WHERE cust_id = 'C02';
+Empty set (0.00 sec)
+
+mysql> SELECT COUNT(*) AS total_orders
+    -> FROM `order`;
++--------------+
+| total_orders |
++--------------+
+|           10 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM `order`
+    -> WHERE order_date < '2026-08-01';
+Empty set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM `order`
+    -> WHERE order_id = 'O05';
+Empty set (0.00 sec)
+
+mysql>
